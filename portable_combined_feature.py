@@ -452,7 +452,7 @@ if __name__ == '__main__':
     if not args.building and not (args.refl and args.trans):
         # Batch mode using repo layout: <repo_root>/data/train/Inputs/Task_2_ICASSP
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        data_root = args.data_root if args.data_root else os.path.join(base_dir, 'data', 'train')
+        data_root = args.data_root if args.data_root else '/auto/home/artashes/data'
         input_dir = os.path.join(data_root, 'Inputs', 'Task_2_ICASSP')
         outputs_dir = os.path.join(data_root, 'Outputs', 'Task_2_ICASSP')
         positions_dir = os.path.join(data_root, 'Positions')
@@ -585,12 +585,19 @@ if __name__ == '__main__':
             print(f"Error: normal map shape mismatch: normals {nx.shape} vs image {refl.shape}")
             raise SystemExit(2)
 
-        # Compute feature using standalone function
-        feat = calculate_combined_loss_with_normals(
-            refl.astype(np.float64, copy=False),
-            trans.astype(np.float64, copy=False),
-            nx, ny, float(x_ant), float(y_ant), float(freq_MHz),
-            max_refl=5, max_trans=15, pixel_size=0.25, n_angles=360*64, radial_step=1.0, max_loss=160.0
+        # Compute feature using high-level helper (handles edge map and options)
+        feat = compute_combined_feature(
+            refl.astype(np.float32, copy=False),
+            trans.astype(np.float32, copy=False),
+            float(x_ant), float(y_ant), float(freq_MHz),
+            nx=nx.astype(np.float32, copy=False),
+            ny=ny.astype(np.float32, copy=False),
+            n_angles=360*64,
+            max_refl=5,
+            max_trans=15,
+            radial_step=1.0,
+            pixel_size=0.25,
+            max_loss=160.0,
         )
         feat = np.nan_to_num(feat, nan=160.0, posinf=160.0, neginf=0.0).astype(np.float32)
 
