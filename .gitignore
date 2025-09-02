@@ -1,0 +1,10 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Large data
+parsed_buildings/
+*.npz
+
+# Images
+*.png
