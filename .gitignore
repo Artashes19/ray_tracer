@@ -8,3 +8,6 @@ parsed_buildings/
 
 # Images
 *.png
+
+# Allow-list sample NPZ exports
+!data/sample100_npz/**
